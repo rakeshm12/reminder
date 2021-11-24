@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             .hasMatch(value)) {
                           return 'enter a valid email';
                         }
-                        return null;
+                        return;
                       },
                     ),
                     const SizedBox(
@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
                         }
-                        return null;
+                        return '';
                       },
                     ),
                     const SizedBox(
@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           }
                           if (e.code == 'unknown') {
                             Fluttertoast.showToast(
-                                msg: 'enter email and password',
+                                msg: 'enter a valid email and password',
                                 toastLength: Toast.LENGTH_SHORT);
                           }
                           if (e.code == 'network-request-failed') {
@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 toastLength: Toast.LENGTH_SHORT);
                           } else if (e.code == 'wrong-password') {
                             Fluttertoast.showToast(
-                                msg: 'wrong password !',
+                                msg: 'Wrong password !',
                                 toastLength: Toast.LENGTH_SHORT);
                           }
                           setState(() {

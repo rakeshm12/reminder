@@ -85,13 +85,13 @@ class _UploadScreenState extends State<UploadScreen> {
       isButton = false;
     });
     final firestore = FirebaseFirestore.instance
-        .collection('images')
+        .collection('photos')
         .doc(widget.userId)
-        .collection('files');
+        .collection('userPhoto');
     final postID = DateTime.now().millisecondsSinceEpoch.toString();
     fireStorage.Reference ref = fireStorage.FirebaseStorage.instance
         .ref()
-        .child('${widget.userId}/files')
+        .child('${widget.userId}/userPhoto')
         .child('post_$postID');
     await ref.putFile(files);
 

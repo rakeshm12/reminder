@@ -144,7 +144,7 @@ class _CardScreenState extends State<CardScreen> {
         return AppAlert(
           cancel: 'Stay',
           exit: 'Exit',
-          content: 'Want to Exit?',
+          content: 'Exit to Home?',
           title: Text('🏠 🏃‍♂' , style: TextStyle(fontSize: 40),),
           onTap: () => Navigator.pop(context, true),
         );

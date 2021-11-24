@@ -48,9 +48,9 @@ class _SecretScreenState extends State<SecretScreen> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('images')
+            .collection('photo')
             .doc(widget.userId)
-            .collection('files')
+            .collection('userPhoto')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -60,7 +60,7 @@ class _SecretScreenState extends State<SecretScreen> {
               gridDelegate:
                   SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
               children: data.map((data) {
-                final image = data['downloadURL'];
+                final image = data['url'];
                 return InkWell(
                   onTap: () async {
                     return await showDialog(
@@ -118,9 +118,9 @@ class _SecretScreenState extends State<SecretScreen> {
 
   Future deleteFile(String id) async {
     final firestore = FirebaseFirestore.instance
-        .collection('images')
+        .collection('photo')
         .doc(widget.userId)
-        .collection('files');
+        .collection('userPhoto');
     await firestore.doc(id).delete().then((value) {
       Fluttertoast.showToast(
           msg: 'Image Deleted successfully', toastLength: Toast.LENGTH_SHORT);
@@ -138,20 +138,21 @@ class _SecretScreenState extends State<SecretScreen> {
         final result = await ImageGallerySaver.saveFile(savePath);
         return result;
       } catch (e) {
+//         write code
         print(e);
       }
     }
   }
-
-  void showDownloadProgress(int received, int total) {
-    setState(() {
-      if (total != -1) {
-        progress = received ~/ total * 100;
-        print(progress);
-      } else
-        return;
-    });
-  }
+// to show download progress use this as ref
+//   void showDownloadProgress(int received, int total) {
+//     setState(() {
+//       if (total != -1) {
+//         progress = received ~/ total * 100;
+//         print(progress);
+//       } else
+//         return;
+//     });
+//   }
 
   Future selectFile() async {
     try {
@@ -182,6 +183,7 @@ class _SecretScreenState extends State<SecretScreen> {
             msg: 'No files selected', toastLength: Toast.LENGTH_SHORT);
       }
     } catch (e) {
+//       write code
       print(e);
     }
   }

@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:reminder_pro/widgets/alert_widget.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -22,9 +24,9 @@ class _ShowReminderState extends State<ShowReminder> {
   @override
   Widget build(BuildContext context) {
     final firestore = FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('reminder');
+        .collection('reminders');
     return FutureBuilder<QuerySnapshot>(
         future: firestore.get(),
         builder: (context, snapshot) {
@@ -122,9 +124,9 @@ class _ShowReminderState extends State<ShowReminder> {
 
   void delete(String id) async {
     final firestore = FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('reminder');
+        .collection('reminders');
     firestore.doc(id).delete().then((value) {
       Fluttertoast.showToast(
           msg: 'Reminder Deleted successfully',
@@ -148,5 +150,27 @@ class CardList extends StatelessWidget {
     return ListTile(leading: leading, title: title);
   }
 }
+
+
+void notifications() async {
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+  if(settings.authorizationStatus == AuthorizationStatus.authorized) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
+  }
 
 }

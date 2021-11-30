@@ -53,8 +53,8 @@ class _CardScreenState extends State<CardScreen> {
                   content: 'Goto settings?',
                   cancel: 'Cancel',
                   exit: 'Settings',
-                  onTap: (ctx) => AppSettings.openDeviceSettings()
-                      .then((value) => Navigator.pop(ctx)));
+                  onTap: () => AppSettings.openDeviceSettings()
+                      .then((value) => Navigator.pop(context)));
             });
       }
     }

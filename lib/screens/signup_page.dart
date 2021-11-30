@@ -59,7 +59,7 @@ class _SignupPageState extends State<SignupPage> {
                             .hasMatch(value)) {
                           return 'enter a valid email';
                         }
-                        return '';
+                        return null;
                       },
                       hideText: false,
                       tailIcon: const SizedBox(),
@@ -79,7 +79,7 @@ class _SignupPageState extends State<SignupPage> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter password';
                         }
-                        return '';
+                        return null;
                       },
                       hideText: false,
                       tailIcon: const SizedBox(),
@@ -118,7 +118,7 @@ class _SignupPageState extends State<SignupPage> {
                                 'email': email,
                                 'uid' : uid
                               };
-                              FirebaseFirestore.instance.collection('user').doc(uid).set(userDetails);
+                              FirebaseFirestore.instance.collection('users').doc(uid).set(userDetails);
 
 
                               if (user != null && !user.emailVerified) {
@@ -140,14 +140,14 @@ class _SignupPageState extends State<SignupPage> {
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               Fluttertoast.showToast(
-                                  msg: 'password length must be at least six',
+                                  msg: 'The password length at least 6',
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   fontSize: 16.0);
                             } else if (e.code == 'email-already-in-use') {
                               Fluttertoast.showToast(
                                   msg:
-                                      'Account already exists.! reset your password..',
+                                      'The account already exists.!, reset your password..',
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   fontSize: 16.0);

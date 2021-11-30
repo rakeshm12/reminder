@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:filesize/filesize.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fireStorage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:reminder_pro/secretScreens/secret_screen.dart';
 import 'package:reminder_pro/widgets/alert_widget.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class UploadScreen extends StatefulWidget {
 class _UploadScreenState extends State<UploadScreen> {
   String? downloadURL;
   bool isButton = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,34 +37,41 @@ class _UploadScreenState extends State<UploadScreen> {
         final isPop = await showExit(context);
         return isPop ?? false;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xff27466e),
-          title: Text('Upload Files'),
-          actions: [
-            TextButton(
-              onPressed: () {
+      child: BlurryModalProgressHUD(
+        inAsyncCall: _isLoading,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(0xff27466e),
+            title: Text('Upload Files'),
+            actions: [
+              TextButton(
+                onPressed: () {
                   setState(() {
-                    uploadFiles(widget.files);
+                    _isLoading = true;
                   });
+                  uploadFiles(widget.files);
 
-              },
-              child: Text(
-                'upload',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: isButton ? Colors.white : Colors.grey),
+                  setState(() {
+                    _isLoading;
+                  });
+                },
+                child: Text(
+                  'upload',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: isButton ? Colors.white : Colors.grey),
+                ),
               ),
-            ),
-            Icon(Icons.cloud_upload)
-          ],
+              Icon(Icons.cloud_upload)
+            ],
+          ),
+          body: ListView.builder(
+              itemCount: widget.files.length,
+              itemBuilder: (context, index) {
+                final files = widget.files[index];
+                return buildName(files);
+              }),
         ),
-        body: ListView.builder(
-            itemCount: widget.files.length,
-            itemBuilder: (context, index) {
-              final files = widget.files[index];
-              return buildName(files);
-            }),
       ),
     );
   }
@@ -79,19 +90,21 @@ class _UploadScreenState extends State<UploadScreen> {
     return fileUrl;
   }
 
+  final user = FirebaseAuth.instance.currentUser!.uid;
+
   Future uploadFile(PlatformFile file) async {
     File files = File(file.path!);
     setState(() {
       isButton = false;
     });
     final firestore = FirebaseFirestore.instance
-        .collection('photos')
+        .collection('images')
         .doc(widget.userId)
-        .collection('userPhoto');
+        .collection('files');
     final postID = DateTime.now().millisecondsSinceEpoch.toString();
     fireStorage.Reference ref = fireStorage.FirebaseStorage.instance
         .ref()
-        .child('${widget.userId}/userPhoto')
+        .child('${widget.userId}/files')
         .child('post_$postID');
     await ref.putFile(files);
 
@@ -103,7 +116,8 @@ class _UploadScreenState extends State<UploadScreen> {
               ? 'File uploaded successfully'
               : 'Files uploaded successfully',
           toastLength: Toast.LENGTH_SHORT);
-    }).then((value) => Navigator.pop(context, true));
+    }).then((value) => Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (ctx) => SecretScreen(userId: user))));
   }
 
   Future<bool?> showExit(context) async {

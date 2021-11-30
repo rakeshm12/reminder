@@ -165,14 +165,14 @@ class _ModalScreenState extends State<ModalScreen> {
                   'time': time.format(context),
                 };
                 final firestore = FirebaseFirestore.instance;
-                 final doc =   firestore.collection('user')
+                 final doc =   firestore.collection('users')
                     .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .collection('reminder');
+                    .collection('reminders');
                 doc.doc().set(card);
                 Fluttertoast.showToast(
                     msg: 'Reminder Added', toastLength: Toast.LENGTH_SHORT);
 
-                doc.doc().collection('reminder').get();
+                doc.doc().collection('reminders').get();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
